@@ -4,39 +4,56 @@
   <meta charset="UTF-8">
   <title>STL Viewer</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #f0f0f0;
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-    }
-
-    #stl_cont {
-      width: 100%;
-      height: 100vh;
-    }
+    body { margin: 0; }
+    canvas { display: block; }
   </style>
 </head>
 <body>
-  <div id="stl_cont"></div>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/STLLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
 
-  <!-- Import STL Viewer -->
-  <script src="https://www.viewstl.com/js/stl_viewer.min.js"></script>
   <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const light = new THREE.HemisphereLight(0xffffff, 0x444444);
+    light.position.set(0, 20, 0);
+    scene.add(light);
+
+    const loader = new THREE.STLLoader();
     const urlParams = new URLSearchParams(window.location.search);
     const modelUrl = urlParams.get('model');
 
     if (modelUrl) {
-      new StlViewer(document.getElementById("stl_cont"), {
-        models: [
-          { id: 0, filename: modelUrl }
-        ]
+      loader.load(modelUrl, function (geometry) {
+        const material = new THREE.MeshStandardMaterial({ color: 0x007bff });
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.rotation.x = -Math.PI / 2;
+        scene.add(mesh);
+        camera.position.set(0, 0, 100);
       });
     } else {
-      document.getElementById("stl_cont").innerHTML = "❌ No model specified.";
+      alert("❌ No model specified.");
     }
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.update();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
   </script>
 </body>
 </html>
