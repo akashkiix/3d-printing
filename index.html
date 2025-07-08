@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>STL Viewer</title>
+  <meta charset="UTF-8" />
+  <title>STL Viewer (ES Module)</title>
   <style>
-    body { margin: 0; }
+    body { margin: 0; overflow: hidden; }
     canvas { display: block; }
   </style>
 </head>
 <body>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/STLLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
+  <script type="module">
+    import * as THREE from 'https://unpkg.com/three@0.152.2/build/three.module.js';
+    import { OrbitControls } from 'https://unpkg.com/three@0.152.2/examples/jsm/controls/OrbitControls.js';
+    import { STLLoader } from 'https://unpkg.com/three@0.152.2/examples/jsm/loaders/STLLoader.js';
 
-  <script>
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -24,24 +24,25 @@
     light.position.set(0, 20, 0);
     scene.add(light);
 
-    const loader = new THREE.STLLoader();
+    const controls = new OrbitControls(camera, renderer.domElement);
+
+    const loader = new STLLoader(); // ✅ Correct instantiation
+
     const urlParams = new URLSearchParams(window.location.search);
     const modelUrl = urlParams.get('model');
 
     if (modelUrl) {
       loader.load(modelUrl, function (geometry) {
-        const material = new THREE.MeshStandardMaterial({ color: 0x007bff });
+        const material = new THREE.MeshStandardMaterial({ color: 0x00aaff });
         const mesh = new THREE.Mesh(geometry, material);
         mesh.rotation.x = -Math.PI / 2;
         scene.add(mesh);
         camera.position.set(0, 0, 100);
+        controls.update();
       });
     } else {
-      alert("❌ No model specified.");
+      alert('❌ No model specified in the URL.');
     }
-
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.update();
 
     function animate() {
       requestAnimationFrame(animate);
