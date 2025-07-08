@@ -2,63 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>STL Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>3D Model Preview</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
     body {
       margin: 0;
-      overflow: hidden;
+      background-color: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
-    canvas {
-      display: block;
+
+    model-viewer {
+      width: 100%;
+      height: 90vh;
+      background: #fff;
+    }
+
+    .not-found {
+      color: white;
+      font-family: sans-serif;
+      font-size: 20px;
     }
   </style>
 </head>
 <body>
-  <script type="module">
-    import * as THREE from 'https://unpkg.com/three@0.152.2/build/three.module.js';
-    import { OrbitControls } from 'https://unpkg.com/three@0.152.2/examples/jsm/controls/OrbitControls.js';
-    import { STLLoader } from 'https://unpkg.com/three@0.152.2/examples/jsm/loaders/STLLoader.js';
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+  <model-viewer
+    id="viewer"
+    alt="A 3D model"
+    auto-rotate
+    camera-controls
+    ar
+    exposure="0.9"
+    shadow-intensity="1"
+    interaction-prompt="when-focused">
+  </model-viewer>
 
-    const light = new THREE.HemisphereLight(0xffffff, 0x444444);
-    light.position.set(0, 20, 0);
-    scene.add(light);
+  <script>
+    const modelMap = {
+      "Astronaut": "https://modelviewer.dev/shared-assets/models/Astronaut.glb",
+      "Flower": "https://modelviewer.dev/shared-assets/models/RobotExpressive.glb",
+      "Keychain": "https://modelviewer.dev/shared-assets/models/NeilArmstrong.glb",
+      // Add more mappings here
+    };
 
-    const controls = new OrbitControls(camera, renderer.domElement);
+    const query = new URLSearchParams(window.location.search);
+    const modelName = query.get("model") || "Astronaut";
 
-    const loader = new STLLoader();
-    const urlParams = new URLSearchParams(window.location.search);
-    const modelUrl = urlParams.get('model');
+    const modelViewer = document.getElementById('viewer');
 
-    if (modelUrl) {
-      loader.load(modelUrl, function (geometry) {
-        const material = new THREE.MeshStandardMaterial({ color: 0x00aaff });
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.rotation.x = -Math.PI / 2;
-        scene.add(mesh);
-        camera.position.set(0, 0, 100);
-        controls.update();
-      });
+    if (modelMap[modelName]) {
+      modelViewer.src = modelMap[modelName];
     } else {
-      alert('❌ No model specified in the URL. Use ?model=your_url.stl');
+      document.body.innerHTML = `<div class="not-found">❌ Model "${modelName}" not found.</div>`;
     }
-
-    function animate() {
-      requestAnimationFrame(animate);
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
   </script>
+
 </body>
 </html>
