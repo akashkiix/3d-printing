@@ -2,10 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>STL Viewer (ES Module)</title>
+  <title>STL Viewer</title>
   <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { display: block; }
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -15,7 +20,7 @@
     import { STLLoader } from 'https://unpkg.com/three@0.152.2/examples/jsm/loaders/STLLoader.js';
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -26,8 +31,7 @@
 
     const controls = new OrbitControls(camera, renderer.domElement);
 
-    const loader = new STLLoader(); // ✅ Correct instantiation
-
+    const loader = new STLLoader();
     const urlParams = new URLSearchParams(window.location.search);
     const modelUrl = urlParams.get('model');
 
@@ -41,7 +45,7 @@
         controls.update();
       });
     } else {
-      alert('❌ No model specified in the URL.');
+      alert('❌ No model specified in the URL. Use ?model=your_url.stl');
     }
 
     function animate() {
