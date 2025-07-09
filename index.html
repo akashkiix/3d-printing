@@ -58,12 +58,11 @@
     <script>
       const params = new URLSearchParams(window.location.search);
       const modelURL = params.get("model");
-
       if (modelURL) {
         document.getElementById("viewer").src = modelURL;
-        console.log("✅ Model loaded from query param:", modelURL);
+        console.log("✅ Loading model:", modelURL);
       } else {
-        document.body.innerHTML = "<p style='padding:20px;'>No model URL provided.</p>";
+        document.body.innerHTML = "<p style='padding:20px;'>❌ No model URL provided.</p>";
       }
     </script>
   </body>
