@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
   <head>
     <title>3D Model Viewer</title>
@@ -29,6 +29,41 @@
         console.log("✅ Model loaded from query param:", modelURL);
       } else {
         document.body.innerHTML = "<p style='padding:20px; color:red;'>No model URL provided.</p>";
+      }
+    </script>
+  </body>
+</html> -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>3D Model Viewer</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: white;
+        height: 100%;
+        overflow: hidden;
+      }
+      model-viewer {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <model-viewer id="viewer" alt="3D Model" auto-rotate camera-controls ar></model-viewer>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const modelURL = params.get("model");
+
+      if (modelURL) {
+        document.getElementById("viewer").src = modelURL;
+        console.log("✅ Model loaded from query param:", modelURL);
+      } else {
+        document.body.innerHTML = "<p style='padding:20px;'>No model URL provided.</p>";
       }
     </script>
   </body>
